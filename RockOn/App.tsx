@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import HomeTabs from './app/HomeTabs';
 import AlbumDetails from './app/albumDetails';
 import PlayerView from './app/playerView';
+import LocalPlayer from './app/localPlayer';
 
 import CustomHeader from './components/SearchBar';
 
@@ -31,6 +32,10 @@ export default function App() {
           <Stack.Screen
             name="PlayerView"
             component={PlayerView}
+          />
+          <Stack.Screen
+            name="LocalPlayer"
+            component={LocalPlayer}
           />
         </Stack.Navigator>
         <StatusBar style="auto" />

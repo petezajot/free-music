@@ -7,8 +7,7 @@ import { DownloadedSong } from '../model/DownloadedSongs';
 import MiniPlayer from '../components/MiniPlayer';
 import { misc } from '../misc';
 
-export default function DownloadsScreen() {
-    const [songs, setSongs] = useState<DownloadedSong[]>([]);
+export default function DownloadsScreen({ navigation }: { navigation: any }) {
     const [groupedSongs, setGroupedSongs] = useState({});
     const [isVisible, setVisible] = useState(false);
     const [selectedAlbum, setSelectedAlbum] = useState('');
@@ -77,7 +76,7 @@ export default function DownloadsScreen() {
                         <Text style={styles.modalTitle}>{selectedAlbum}</Text>
 
                         <View style={styles.iconGroup}>
-                            <IconButton icon="play" onPress={() => console.log(`Reproducir ${selectedAlbum} completo`)} />
+                            <IconButton icon="play" onPress={() => navigation.navigate('LocalPlayer', { selectedTracks: selectedTracks })} />
                             <IconButton icon="playlist-plus" onPress={() => console.log(`Agregar ${selectedAlbum} completo a lista de reproducción`)} />
                         </View>
 
