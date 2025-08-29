@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, Image, TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAlbumsViewModel } from '../viewModel/AlbumsViewModel';
 import CustomHeader from '../components/SearchBar';
 import LoaderView from "../components/LoaderView";
@@ -14,7 +15,16 @@ export default function Home({ navigation }: { navigation: any }) {
             {loading ? (
                 <LoaderView />
             ) : albums.length === 0 ? (
-                <Text style={styles.emptyText}>Realiza una búsqueda por artista</Text>
+                <View>
+                    <Text style={styles.emptyText}>Realiza una búsqueda por artista</Text>
+
+                    <TouchableOpacity onPress={async () => {
+                        await AsyncStorage.clear();
+                        console.log('AsyncStorage borrado');
+                    }}>
+                        <Text>🧼 Resetear almacenamiento</Text>
+                    </TouchableOpacity>
+                </View>
             ) : (
                 <FlatList
                     data={albums}

@@ -47,12 +47,6 @@ export default function LocalPlayer() {
         setIsPlaying(true);
     }, [currentIndex]);
 
-    /*useEffect(() => {
-        return () => {
-            AudioManager.unload(); // 🔥 Detiene y libera el audio al salir
-        };
-    }, []);*/
-
     const togglePlayback = async () => {
         await AudioManager.toggle();
         setIsPlaying(prev => !prev);
@@ -109,15 +103,15 @@ export default function LocalPlayer() {
     return (
         <ImageBackground
             style={styles.container}
-            source={{ uri: selectedTracks[0].image }}
+            source={{ uri: selectedTracks[currentIndex].image }}
             resizeMode="cover"
         >
             <View style={styles.overlay} />
             <Image
-                source={{ uri: selectedTracks[0].image }}
+                source={{ uri: selectedTracks[currentIndex].image }}
                 style={{ width: 100, height: 100, marginTop: 0 }}
             />
-            <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10, color: "#FFFFFF" }} numberOfLines={1}>{selectedTracks[0].artist}</Text>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10, color: "#FFFFFF" }} numberOfLines={1}>{selectedTracks[currentIndex].artist}</Text>
             <Text style={styles.time}>{selectedTracks[currentIndex]?.name}</Text>
 
             <Slider

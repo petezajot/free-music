@@ -1,11 +1,14 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { List } from 'react-native-paper';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, ScrollView, Alert } from 'react-native';
 import { IconButton } from 'react-native-paper';
+import uuid from 'react-native-uuid'
 import { DownloadedSong } from '../model/DownloadedSongs';
 import MiniPlayer from '../components/MiniPlayer';
 import { misc } from '../misc';
+import { Track } from '../model/Playlists';
+import PlaylistModal from '../components/PlaylistModal';
 
 export default function DownloadsScreen({ navigation }: { navigation: any }) {
     const [groupedSongs, setGroupedSongs] = useState({});
@@ -15,6 +18,9 @@ export default function DownloadsScreen({ navigation }: { navigation: any }) {
     const [selectedArtist, setSelectedArtist] = useState('');
     const [songData, setSongData] = useState({})
     const [showPlayer, setShowPlayer] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [listOfLists, setListOfLists] = useState([]);
+    const [trackToAdd, setTrackToAdd] = useState({});
 
     const openModal = (tracks, album, artist) => {
         setSelectedAlbum(album);
@@ -25,8 +31,8 @@ export default function DownloadsScreen({ navigation }: { navigation: any }) {
 
     const playSong = (songName: string, location: string, image: string) => {
         var data = {
-            name:songName,
-            location:location,
+            name: songName,
+            location: location,
             image: image
         }
         setSongData(data)
@@ -46,10 +52,37 @@ export default function DownloadsScreen({ navigation }: { navigation: any }) {
                     grouped[artist][album].push(song);
                 });
                 setGroupedSongs(grouped);
+
             };
             loadDownloads();
         }, [])
     );
+
+    const addNewSongToPlayList = (track: any) => {
+        misc.getAllPlaylists()
+            .then(res => {
+                setListOfLists(res);
+            })
+            .catch(err => {
+                console.error("Error: ", err);
+            })
+        setModalVisible(true)
+        setTrackToAdd(track)
+    }
+
+    const addSongToPlayList = (listId: string, listName: string) => {
+        const id = uuid.v4();
+        const trackInfo: Track = {
+            id: id,
+            album: trackToAdd.album,
+            name: trackToAdd.name,
+            artist: trackToAdd.artist,
+            location: trackToAdd.location,
+            image: trackToAdd.image
+        }
+        console.log("TrackInfo: ", trackInfo)
+        misc.addTrackToPlaylist(listId, listName, trackInfo)
+    };
 
     return (
         <View style={{ flex: 1, padding: 10, height: '100%', width: '100%' }}>
@@ -86,7 +119,7 @@ export default function DownloadsScreen({ navigation }: { navigation: any }) {
                                     <Text style={styles.trackText}>🎵 {track.name}</Text>
                                     <View style={styles.iconGroup}>
                                         <IconButton icon="play" onPress={() => playSong(track.name, track.location, track.image)} />
-                                        <IconButton icon="playlist-plus" onPress={() => console.log("Add: ", track.name)} />
+                                        <IconButton icon="playlist-plus" onPress={() => addNewSongToPlayList(track)} />
                                     </View>
                                 </View>
                             ))}
@@ -108,6 +141,15 @@ export default function DownloadsScreen({ navigation }: { navigation: any }) {
                     isLocal={true}
                 />)
             }
+
+            <PlaylistModal
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                playlists={listOfLists}
+                onSelect={(playlistId, playlistName) => {
+                    addSongToPlayList(playlistId, playlistName);
+                }}
+            />
 
         </View>
     );

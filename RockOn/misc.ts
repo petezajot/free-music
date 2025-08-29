@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DownloadedSong } from './model/DownloadedSongs';
+import { Playlist, Track } from './model/Playlists';
 
 export const misc = {
     formatDuration: (seconds: number): string => {
@@ -23,5 +24,20 @@ export const misc = {
     getDownloadedSongs: async (): Promise<DownloadedSong[]> => {
         const data = await AsyncStorage.getItem('downloadedSongs');
         return data ? JSON.parse(data) : [];
-    }
+    },
+    addTrackToPlaylist: async (playlistId: string, name: string, track: Track) => {
+        const raw = await AsyncStorage.getItem(`playlist-${name}-${playlistId}`);
+        if (!raw) return;
+
+        const playlist: Playlist = JSON.parse(raw);
+        playlist.tracks.push(track);
+
+        await AsyncStorage.setItem(`playlist-${name}-${playlistId}`, JSON.stringify(playlist));
+    },
+    getAllPlaylists: async (): Promise<Playlist[]> => {
+        const keys = await AsyncStorage.getAllKeys();
+        const playlistKeys = keys.filter(k => k.startsWith('playlist-'));
+        const items = await AsyncStorage.multiGet(playlistKeys);
+        return items.map(([_, value]) => JSON.parse(value || '{}'))
+    },
 }; 

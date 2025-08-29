@@ -21,13 +21,20 @@
         "foregroundImage": "./assets/rockon.png",
         "backgroundColor": "#000000"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.sergiogarcia.RockOn"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d8fc5b43-97c3-425e-bad1-8fbe5cad429c"
+      }
+    }
   }
 }
